@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-//let  vegeNameArray=["Cauliflower","Carrot","Capsicum","Cashews"]
+
 let vegeNamePriceJSONArray=[
         {vegeName:"Cauliflower", vegePrice: 60},
         {vegeName:"Carrot",vegePrice: 56},
@@ -16,13 +16,16 @@ describe('green cart Ca search test suite',()=>{
     })
 
     it.only('verify Ca only veges appear when searching ca', ()=>{
-        let vegeNameArray = Object.keys(vegeNamePriceJSONArray).map(key => vegeNamePriceJSONArray[key].vegeName)
+
+       // let vegeNameArray = Object.keys(vegeNamePriceJSONArray).map(key => vegeNamePriceJSONArray[key].vegeName)
+       let vegeNameArray = Object.values(vegeNamePriceJSONArray).map(value => value.vegeName)
         cy.log(vegeNameArray)
-        cy.get('.products-wrapper .product').should('have.length',4)
-        cy.get('.products-wrapper .product').each(($vege)=>{
+        cy.get('.products-wrapper .product').should('have.length',vegeNameArray.length)
+        cy.get('.products-wrapper .product').find('h4').each(($vege)=>{
                      
             let vegeNameOnly = extractVegeName($vege);                          
-            expect(vegeNameOnly).to.be.oneOf(vegeNameArray)
+            //expect(vegeNameOnly).to.be.oneOf(vegeNameArray)
+            expect([$vege.text()]).to.contain.oneOf(vegeNameArray)
         })
     })
 
@@ -31,17 +34,19 @@ describe('green cart Ca search test suite',()=>{
        
         
         cy.get('.products-wrapper .product').each(($vege)=>{
-            var singleVegeNamePrice={}       
-            let vegeNameOnly = extractVegeName($vege);                          
+          
+        var singleVegeNamePrice={}     
+
+        let vegeNameOnly = extractVegeName($vege);                          
            
-           let vegePrice= parseInt($vege.find('.product-price').text())
+        let vegePrice= parseInt($vege.find('.product-price').text())
            
-           singleVegeNamePrice.vegeName= vegeNameOnly
-           singleVegeNamePrice.vegePrice=vegePrice
-           recNamePriceList.push(singleVegeNamePrice)
+        singleVegeNamePrice.vegeName= vegeNameOnly
+        singleVegeNamePrice.vegePrice=vegePrice
+        recNamePriceList.push(singleVegeNamePrice)
            
            
-           cy.log(vegePrice+ ":  "+ vegeNameOnly)
+        cy.log(vegePrice+ ":  "+ vegeNameOnly)
 
              
         }).wrap(recNamePriceList)
